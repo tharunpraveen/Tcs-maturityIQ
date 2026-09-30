@@ -5,28 +5,28 @@ import Link from 'next/link';
 import { useAuth } from './AuthContext';
 
 const SDLC_AREAS = [
-  { name: 'Requirements', color: '#166534', icon: 'checklist', desc: 'AI-assisted requirements synthesis, backlog refinement, impact analysis, and user story decomposition.' },
-  { name: 'Architecture', color: '#1e40af', icon: 'account_tree', desc: 'Automated architectural drift detection, diagram synthesis, ADR generation, and compliance gates.' },
-  { name: 'Development',  color: '#0284c7', icon: 'code', desc: 'Context-aware AI coding assistants, agentic pull requests, MCP integration, and code refactoring.' },
-  { name: 'Testing',      color: '#d97706', icon: 'science', desc: 'Self-healing test suites, synthetic data synthesis, automated unit testing, and defect classification.' },
-  { name: 'Deployment',   color: '#7c3aed', icon: 'rocket_launch', desc: 'Canary pipeline orchestration, AI-driven log telemetry analysis, and automated release gates.' },
+  { name: 'Requirements', color: '#166534', icon: 'checklist',            desc: 'AI-powered idea exploration, backlog refinement, impact analysis, and bidirectional traceability.' },
+  { name: 'Architecture', color: '#1e40af', icon: 'account_tree',         desc: 'Architecture synthesisers, diagram generation, PR drift detection, compliance analysis, and FinOps.' },
+  { name: 'Development',  color: '#0284c7', icon: 'code',                 desc: 'AI coding assistants, agentic pull requests, custom MCP scripts, and dependency mapping.' },
+  { name: 'Testing',      color: '#d97706', icon: 'science',              desc: 'E2E workflow automation, synthetic data creation, defect classification, and test generation.' },
+  { name: 'Deployment',   color: '#7c3aed', icon: 'rocket_launch',        desc: 'Automated release notes, capacity prediction, self-healing systems, and CI/CD quality gates.' },
 ];
 
 const AMS_AREAS = [
-  { name: 'Service Management',  color: '#4f46e5', icon: 'support_agent', desc: 'Proactive SLA anomaly detection, automated service catalog governance, and self-service fulfilment.' },
-  { name: 'Incident Management', color: '#dc2626', icon: 'warning_amber', desc: 'Automated incident triage, AI-driven runbook execution, blast radius scoring, and MTTR reduction.' },
-  { name: 'Change Management',   color: '#ea580c', icon: 'published_with_changes', desc: 'AI-assisted change risk prediction, conflict detection, blast radius assessment, and approval workflows.' },
-  { name: 'Problem Management',  color: '#9333ea', icon: 'manage_search', desc: 'Automated root cause analysis, predictive pattern clustering, and proactive recurrence prevention.' },
-  { name: 'Release Management',  color: '#059669', icon: 'rocket_launch', desc: 'Intelligent release readiness verification, pipeline telemetry inspection, and automated go/no-go gates.' },
+  { name: 'Service Management',  color: '#4f46e5', icon: 'support_agent',          desc: 'AI-driven SLA monitoring, self-service request fulfilment, and proactive service catalogue governance.' },
+  { name: 'Incident Management', color: '#dc2626', icon: 'warning_amber',          desc: 'Automated incident triage, runbook execution, self-healing remediation, and escalation intelligence.' },
+  { name: 'Change Management',   color: '#ea580c', icon: 'published_with_changes', desc: 'AI change risk scoring, conflict detection, blast radius prediction, and approval automation.' },
+  { name: 'Problem Management',  color: '#9333ea', icon: 'manage_search',          desc: 'Automated root cause analysis, predictive anomaly detection, and structured problem resolution.' },
+  { name: 'Release Management',  color: '#059669', icon: 'rocket_launch',          desc: 'AI-powered release gate assessment, pipeline orchestration, and go/no-go recommendation engine.' },
 ];
 
 const LEVELS = [
-  { label: 'L0', title: 'Traditional', color: '#64748b', bg: '#f1f5f9', border: '#cbd5e1', desc: 'Completely manual workflows with no standardized AI tool integration or automation.' },
-  { label: 'L1', title: 'Assisted / Tool', color: '#dc2626', bg: '#fee2e2', border: '#fecaca', desc: 'Basic inline autocomplete, chat assistance, and ad-hoc individual AI tool experimentation.' },
-  { label: 'L2', title: 'Delegated / Assistant', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa', desc: 'AI acts as supervised copilot drafting code, analyses, and tickets under human review.' },
-  { label: 'L3', title: 'Supervised Agent', color: '#d97706', bg: '#fef3c7', border: '#fde68a', desc: 'Autonomous AI agents orchestrate multi-step tasks bounded by human verification gates.' },
-  { label: 'L4', title: 'Autonomous Workforce', color: '#2563eb', bg: '#dbeafe', border: '#bfdbfe', desc: 'High-trust autonomous execution, automated safety nets, evaluation metrics, and guardrails.' },
-  { label: 'L5', title: 'Agentic Enterprise', color: '#166534', bg: '#dcfce7', border: '#bbf7d0', desc: 'Self-optimizing delivery loops, automated drift remediation, and fully autonomous operations.' },
+  { label: 'L0', title: 'Traditional',          color: '#64748b', bg: '#f1f5f9', border: '#cbd5e1', desc: 'Entirely manual processes. No AI tools integrated into workflows.' },
+  { label: 'L1', title: 'Assisted / Tool',       color: '#dc2626', bg: '#fee2e2', border: '#fecaca', desc: 'Basic inline autocomplete, chat assistants, and ad-hoc AI scripts.' },
+  { label: 'L2', title: 'Delegated / Assistant', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa', desc: 'AI acts as copilot — opening tickets, drafting analyses under supervision.' },
+  { label: 'L3', title: 'Supervised Agent',      color: '#d97706', bg: '#fef3c7', border: '#fde68a', desc: 'AI agents orchestrate multi-step tasks with human approval gates.' },
+  { label: 'L4', title: 'Autonomous Workforce',  color: '#2563eb', bg: '#dbeafe', border: '#bfdbfe', desc: 'Automated safety nets, autonomous task execution, structured evals.' },
+  { label: 'L5', title: 'Agentic Enterprise',    color: '#166534', bg: '#dcfce7', border: '#bbf7d0', desc: 'Self-healing production, automatic drift remediation, fully autonomous workflows.' },
 ];
 
 export default function Home() {
@@ -53,9 +53,9 @@ export default function Home() {
   const areas = activeFramework === 'SDLC' ? SDLC_AREAS : AMS_AREAS;
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', paddingBottom: '32px' }}>
+    <div style={{ maxWidth: '1280px', margin: '0 auto', paddingBottom: '36px' }}>
 
-      {/* ── Hero Section (Enterprise Gateway Pattern) ─────────────────────── */}
+      {/* ── Hero Section ─────────────────────────────────────────────────── */}
       <section style={{
         background: '#ffffff',
         border: '1px solid #e2e8f0',
@@ -71,7 +71,7 @@ export default function Home() {
         <div style={{
           position: 'absolute', top: '-100px', left: '50%', transform: 'translateX(-50%)',
           width: '700px', height: '360px',
-          background: 'radial-gradient(ellipse at center, rgba(30, 64, 175, 0.09) 0%, rgba(217, 119, 6, 0.04) 50%, transparent 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(30, 64, 175, 0.08) 0%, rgba(217, 119, 6, 0.04) 50%, transparent 70%)',
           pointerEvents: 'none',
         }} />
 
@@ -92,7 +92,7 @@ export default function Home() {
           marginBottom: '20px',
         }}>
           <span className="material-icons" style={{ fontSize: '1rem' }}>analytics</span>
-          TCS MATURITYIQ · ENTERPRISE AI AUDIT ENGINE
+          TCS MATURITYIQ · AI MATURITY ASSESSMENT PLATFORM
         </div>
 
         {/* Main Title */}
@@ -117,20 +117,20 @@ export default function Home() {
 
         {/* Subtitle */}
         <p style={{
-          maxWidth: '740px',
+          maxWidth: '720px',
           margin: '0 auto 36px',
           color: '#475569',
           fontSize: '1.08rem',
           lineHeight: 1.75,
           fontWeight: 500,
         }}>
-          Precision maturity assessment across two unified enterprise disciplines —{' '}
-          <strong style={{ color: '#166534' }}>SDLC Intelligence</strong> for software engineering delivery and{' '}
-          <strong style={{ color: '#4f46e5' }}>AMS Intelligence</strong> for application operations and support.
+          Two precision assessment frameworks —{' '}
+          <strong style={{ color: '#166534' }}>SDLC Intelligence</strong> and{' '}
+          <strong style={{ color: '#4f46e5' }}>AMS Intelligence</strong> — to audit your engineering and operations teams across every AI maturity dimension.
         </p>
 
         {/* CTA Button Group */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap', marginBottom: '40px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap', marginBottom: '36px' }}>
           {user ? (
             <Link href={dashboardLink} className="btn-primary-action" style={{ fontSize: '1rem', padding: '14px 32px' }}>
               <span className="material-icons" style={{ fontSize: '1.2rem' }}>dashboard</span>
@@ -165,163 +165,171 @@ export default function Home() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="material-icons" style={{ color: '#166534', fontSize: '1.1rem' }}>check_circle</span>
-            130+ Evaluated AI Practices
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span className="material-icons" style={{ color: '#1e40af', fontSize: '1.1rem' }}>check_circle</span>
-            2 Dual-Core Frameworks (SDLC & AMS)
+            120 SDLC Questions
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="material-icons" style={{ color: '#4f46e5', fontSize: '1.1rem' }}>check_circle</span>
-            10 Operational Delivery Domains
+            10 AMS Questions
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span className="material-icons" style={{ color: '#1e40af', fontSize: '1.1rem' }}>check_circle</span>
+            10 Assessment Domains
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="material-icons" style={{ color: '#d97706', fontSize: '1.1rem' }}>check_circle</span>
-            Instant Executive Spider Chart & PDF
+            L0 → L5 Deterministic Maturity Scale
           </div>
         </div>
       </section>
 
-      {/* ── Dual Framework Gateway Cards ──────────────────────────────────── */}
+      {/* ── Two Assessment Frameworks ─────────────────────────────────────── */}
       <section style={{ marginBottom: '52px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
           <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>
-            Two Specialized Assessment Pathways
+            Two Assessment Frameworks
           </span>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
         </div>
 
         <div className="row g-4">
-          {/* SDLC Intelligence Card */}
+          {/* SDLC Card */}
           <div className="col-md-6">
             <div style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
               borderTop: '4px solid #166534',
               borderRadius: '16px',
-              padding: '28px',
+              overflow: 'hidden',
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
               boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
               transition: 'all 0.22s ease',
-              position: 'relative',
-              overflow: 'hidden',
             }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(22, 101, 52, 0.1)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)'; }}
             >
-              <div style={{ position: 'absolute', top: 0, right: 0, width: '130px', height: '130px', background: 'radial-gradient(circle at top right, rgba(22, 101, 52, 0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+              {/* Actual Project Image */}
+              <div style={{ width: '100%', height: '160px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                <img src="/sdlc_card.jpg" alt="SDLC pipeline illustration" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                <div style={{ width: '44px', height: '44px', background: '#dcfce7', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span className="material-icons" style={{ color: '#166534', fontSize: '1.5rem' }}>developer_mode</span>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>
-                    FRAMEWORK 1 · ENGINEERING
+              {/* Content */}
+              <div style={{ padding: '24px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div style={{ width: '38px', height: '38px', background: '#dcfce7', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span className="material-icons" style={{ color: '#166534', fontSize: '1.3rem' }}>developer_mode</span>
                   </div>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
-                    SDLC Intelligence
-                  </h2>
+                  <div>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>
+                      Framework 1
+                    </div>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
+                      SDLC Intelligence
+                    </h2>
+                  </div>
                 </div>
-              </div>
 
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.7, marginBottom: '20px', flexGrow: 1 }}>
-                Audit your engineering teams across the complete software delivery lifecycle — covering AI agent adoption in Requirements, Architecture, Development, Testing, and Deployment.
-              </p>
+                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.7, marginBottom: '16px', flexGrow: 1 }}>
+                  Audit your engineering team&apos;s AI maturity across the full software delivery lifecycle — from requirements and architecture through code, testing, and deployment.
+                </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '22px' }}>
-                {SDLC_AREAS.map(a => (
-                  <span key={a.name} style={{ fontSize: '0.72rem', fontWeight: 600, color: a.color, background: `${a.color}15`, border: `1px solid ${a.color}30`, borderRadius: '6px', padding: '3px 9px' }}>
-                    {a.name}
-                  </span>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
-                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                  <strong style={{ color: '#166534', fontSize: '1.15rem', fontFamily: 'var(--font-heading)' }}>{sdlcCount}</strong> practices · 5 domains
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '20px' }}>
+                  {SDLC_AREAS.map(a => (
+                    <span key={a.name} style={{ fontSize: '0.72rem', fontWeight: 600, color: a.color, background: `${a.color}15`, border: `1px solid ${a.color}30`, borderRadius: '6px', padding: '3px 9px' }}>
+                      {a.name}
+                    </span>
+                  ))}
                 </div>
-                <Link href="/sdlc" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#166534', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  Explore Framework <span className="material-icons" style={{ fontSize: '1rem' }}>arrow_forward</span>
-                </Link>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    <strong style={{ color: '#166534', fontSize: '1.15rem', fontFamily: 'var(--font-heading)' }}>{sdlcCount}</strong> questions · 5 domains
+                  </div>
+                  <Link href="/sdlc" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#166534', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    Explore Framework <span className="material-icons" style={{ fontSize: '1rem' }}>arrow_forward</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* AMS Intelligence Card */}
+          {/* AMS Card */}
           <div className="col-md-6">
             <div style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
               borderTop: '4px solid #4f46e5',
               borderRadius: '16px',
-              padding: '28px',
+              overflow: 'hidden',
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
               boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
               transition: 'all 0.22s ease',
-              position: 'relative',
-              overflow: 'hidden',
             }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(79, 70, 229, 0.1)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)'; }}
             >
-              <div style={{ position: 'absolute', top: 0, right: 0, width: '130px', height: '130px', background: 'radial-gradient(circle at top right, rgba(79, 70, 229, 0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+              {/* Actual Project Image */}
+              <div style={{ width: '100%', height: '160px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                <img src="/ams_card.jpg" alt="AMS operations dashboard illustration" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                <div style={{ width: '44px', height: '44px', background: '#e0e7ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span className="material-icons" style={{ color: '#4f46e5', fontSize: '1.5rem' }}>support_agent</span>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#4f46e5', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>
-                    FRAMEWORK 2 · OPERATIONS
+              {/* Content */}
+              <div style={{ padding: '24px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div style={{ width: '38px', height: '38px', background: '#e0e7ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span className="material-icons" style={{ color: '#4f46e5', fontSize: '1.3rem' }}>support_agent</span>
                   </div>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
-                    AMS Intelligence
-                  </h2>
+                  <div>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#4f46e5', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>
+                      Framework 2
+                    </div>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
+                      AMS Intelligence
+                    </h2>
+                  </div>
                 </div>
-              </div>
 
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.7, marginBottom: '20px', flexGrow: 1 }}>
-                Evaluate your application operations AI capability across incident triage, self-service request automation, change blast radius detection, and release orchestration.
-              </p>
+                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.7, marginBottom: '16px', flexGrow: 1 }}>
+                  Evaluate your operations team&apos;s AI maturity across application management — from service catalogues and incident triage to change risk, problem resolution, and release orchestration.
+                </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '22px' }}>
-                {AMS_AREAS.map(a => (
-                  <span key={a.name} style={{ fontSize: '0.72rem', fontWeight: 600, color: a.color, background: `${a.color}15`, border: `1px solid ${a.color}30`, borderRadius: '6px', padding: '3px 9px' }}>
-                    {a.name}
-                  </span>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
-                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                  <strong style={{ color: '#4f46e5', fontSize: '1.15rem', fontFamily: 'var(--font-heading)' }}>{amsCount}</strong> practices · 5 domains
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '20px' }}>
+                  {AMS_AREAS.map(a => (
+                    <span key={a.name} style={{ fontSize: '0.72rem', fontWeight: 600, color: a.color, background: `${a.color}15`, border: `1px solid ${a.color}30`, borderRadius: '6px', padding: '3px 9px' }}>
+                      {a.name}
+                    </span>
+                  ))}
                 </div>
-                <Link href="/ams" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4f46e5', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  Explore Framework <span className="material-icons" style={{ fontSize: '1rem' }}>arrow_forward</span>
-                </Link>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    <strong style={{ color: '#4f46e5', fontSize: '1.15rem', fontFamily: 'var(--font-heading)' }}>{amsCount}</strong> questions · 5 domains
+                  </div>
+                  <Link href="/ams" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4f46e5', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    Explore Framework <span className="material-icons" style={{ fontSize: '1rem' }}>arrow_forward</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Interactive Domain Explorer ───────────────────────────────────── */}
+      {/* ── Assessment Domains Explorer ───────────────────────────────────── */}
       <section id="domains" style={{ marginBottom: '52px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
           <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>
-            Assessment Domains & Practices
+            Assessment Domains
           </span>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
         </div>
 
-        {/* Framework Selector Pills */}
+        {/* Tab Toggle */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
           <div style={{ display: 'flex', gap: '6px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '4px', boxShadow: '0 1px 4px rgba(0,0,0,0.03)' }}>
             <button
@@ -334,7 +342,7 @@ export default function Home() {
                 transition: 'all 0.15s ease',
               }}
             >
-              SDLC Domains
+              SDLC Intelligence
             </button>
             <button
               onClick={() => setActiveFramework('AMS')}
@@ -346,12 +354,12 @@ export default function Home() {
                 transition: 'all 0.15s ease',
               }}
             >
-              AMS Domains
+              AMS Intelligence
             </button>
           </div>
         </div>
 
-        {/* 5 Dynamic Domain Cards */}
+        {/* 5 Domain Cards */}
         <div className="row g-3">
           {areas.map((area, idx) => (
             <div className="col-lg col-md-4 col-sm-6 col-12" key={idx}>
@@ -374,19 +382,19 @@ export default function Home() {
                   <span className="material-icons" style={{ color: area.color, fontSize: '1.3rem' }}>{area.icon}</span>
                 </div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '6px', color: '#0f172a' }}>{area.name}</h3>
-                <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>{area.desc}</p>
+                <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.65, margin: 0 }}>{area.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── AI Maturity Progression Model (L0 → L5) ───────────────────────── */}
+      {/* ── AI Maturity Scale — Applies to Both Frameworks ───────────────── */}
       <section id="maturity" style={{ marginBottom: '52px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
           <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>
-            L0 → L5 AI Maturity Progression Model
+            AI Maturity Scale — Applies to Both Frameworks
           </span>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
         </div>
@@ -430,7 +438,7 @@ export default function Home() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
           <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>
-            Enterprise Platform Capabilities
+            Platform Capabilities
           </span>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
         </div>
@@ -440,34 +448,34 @@ export default function Home() {
             {
               icon: 'bar_chart',
               color: '#166534',
-              title: 'Dual-Framework Benchmarking',
-              desc: 'Benchmark AI maturity across both software engineering delivery (SDLC) and operations (AMS) on a unified deterministic rubric.',
+              title: 'Dual-Framework Evaluation',
+              desc: 'Assess AI maturity across both SDLC and AMS disciplines on one unified platform — covering engineering delivery and operational excellence.',
               bullets: [
-                '120+ SDLC practices across 5 domains',
-                'Comprehensive AMS operations coverage',
-                'Unified multi-team benchmark comparison',
+                '120 SDLC questions across 5 domains',
+                '10 AMS questions across 5 domains',
+                'Suitable for engineering & operations teams',
               ],
             },
             {
-              icon: 'insights',
+              icon: 'trending_up',
               color: '#1e40af',
-              title: 'Multi-Axis Radar Spider Modeling',
-              desc: 'Visualize team maturity strengths and blind spots across every dimension with interactive radar matrices and KPI delta tracking.',
+              title: 'L0 → L5 Maturity Mapping',
+              desc: 'Benchmark your team against 6 progressive maturity levels, visualised per domain with radar charts and detailed score breakdowns.',
               bullets: [
-                'Per-domain score extraction (0–100%)',
-                'Visual radar dimension alignment',
-                'Historical progression tracking',
+                'Per-domain maturity score (0–5 scale)',
+                'Interactive radar chart visualisation',
+                'Comparative maturity benchmarking',
               ],
             },
             {
               icon: 'description',
               color: '#d97706',
-              title: 'Actionable Executive Reports',
-              desc: 'Instant assessment audits complete with executive summaries, maturity levels, and automated gap remediation action roadmaps.',
+              title: 'Actionable Assessment Reports',
+              desc: 'Generate a professional AI-powered audit report instantly after completing an assessment, complete with domain scores, maturity levels, and targeted recommendations.',
               bullets: [
                 'Instant PDF-ready printable report',
-                'Prioritized technical recommendations',
-                'Targeted toolchain & governance guidance',
+                'Domain-level score breakdown',
+                'Priority actions & improvement roadmap',
               ],
             },
           ].map((f, i) => (
@@ -491,7 +499,7 @@ export default function Home() {
                   <span className="material-icons" style={{ fontSize: '1.6rem', color: f.color }}>{f.icon}</span>
                 </div>
                 <h4 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '8px', color: '#0f172a' }}>{f.title}</h4>
-                <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.65, margin: '0 0 18px', flexGrow: 1 }}>{f.desc}</p>
+                <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.7, margin: '0 0 18px', flexGrow: 1 }}>{f.desc}</p>
                 <div style={{ height: '1px', background: '#f1f5f9', marginBottom: '16px' }} />
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {f.bullets.map((b, bi) => (
@@ -517,10 +525,10 @@ export default function Home() {
         boxShadow: '0 12px 36px rgba(30, 64, 175, 0.25)',
       }}>
         <h2 style={{ fontSize: '1.8rem', fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: '10px' }}>
-          Ready to Benchmark Your Organization's AI Maturity?
+          Ready to Benchmark Your AI Maturity?
         </h2>
-        <p style={{ maxWidth: '600px', margin: '0 auto 28px', color: '#bfdbfe', fontSize: '0.95rem', lineHeight: 1.6 }}>
-          Take the assessment, identify maturity bottlenecks, and generate your strategic AI implementation roadmap today.
+        <p style={{ maxWidth: '620px', margin: '0 auto 28px', color: '#bfdbfe', fontSize: '0.95rem', lineHeight: 1.6 }}>
+          Take the assessment across SDLC or AMS to receive your personalized maturity score, interactive radar chart, and improvement roadmap.
         </p>
         <Link
           href={user ? '/dashboard' : '/signup'}
@@ -544,7 +552,7 @@ export default function Home() {
           onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = '#d97706'; }}
         >
           <span className="material-icons" style={{ fontSize: '1.2rem' }}>play_arrow</span>
-          {user ? 'Go to Dashboard →' : 'Launch Free Assessment →'}
+          {user ? 'Go to Dashboard →' : 'Start Free Assessment →'}
         </Link>
       </section>
 

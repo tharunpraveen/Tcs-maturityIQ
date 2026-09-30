@@ -5,159 +5,131 @@ import Link from 'next/link';
 import { useAuth } from '../AuthContext';
 
 const AMS_AREAS = [
-  {
-    name: 'Service Management',
-    color: '#4f46e5',
-    icon: 'support_agent',
-    badge: 'OPERATIONS 1',
-    desc: 'AI-driven SLA monitoring and predictive breach alerting, automated self-service request fulfillment, and proactive service catalog governance.',
-    capabilities: ['Predictive SLA monitoring', 'Zero-touch catalog requests', 'Automated ticket routing'],
-  },
-  {
-    name: 'Incident Management',
-    color: '#dc2626',
-    icon: 'warning_amber',
-    badge: 'OPERATIONS 2',
-    desc: 'Automated incident triage and classification, AI-driven runbook execution, blast radius scoring, MTTR reduction, and automated escalation intelligence.',
-    capabilities: ['Autonomous runbook execution', 'Blast radius calculation', 'Automated MTTR mitigation'],
-  },
-  {
-    name: 'Change Management',
-    color: '#ea580c',
-    icon: 'published_with_changes',
-    badge: 'OPERATIONS 3',
-    desc: 'AI change risk prediction and schedule conflict detection, automated downstream impact analysis, CAB dossier synthesis, and approval workflow automation.',
-    capabilities: ['Change risk scoring', 'Conflict detection matrix', 'Automated CAB approvals'],
-  },
-  {
-    name: 'Problem Management',
-    color: '#9333ea',
-    icon: 'manage_search',
-    badge: 'OPERATIONS 4',
-    desc: 'Automated root cause analysis (RCA), predictive anomaly clustering from telemetry, structured problem resolution, and proactive recurrence prevention.',
-    capabilities: ['Automated RCA generation', 'Telemetry pattern clustering', 'Proactive defect prevention'],
-  },
-  {
-    name: 'Release Management',
-    color: '#059669',
-    icon: 'rocket_launch',
-    badge: 'OPERATIONS 5',
-    desc: 'AI-powered release readiness gates, end-to-end pipeline telemetry inspection, automated go/no-go recommendation engine, and rollback risk scoring.',
-    capabilities: ['Autonomous go/no-go gates', 'Pipeline telemetry auditing', 'Release readiness scoring'],
-  },
+  { name: 'Service Management',  color: '#4f46e5', desc: 'AI-driven SLA monitoring and alerting before breaches occur, automated self-service request fulfilment, and proactive service catalogue governance.' },
+  { name: 'Incident Management', color: '#dc2626', desc: 'Automated incident triage and classification, runbook execution and self-healing remediation, escalation intelligence, and real-time impact scoring.' },
+  { name: 'Change Management',   color: '#ea580c', desc: 'AI change risk scoring and conflict detection, automated blast radius prediction, downstream impact analysis, and approval workflow automation.' },
+  { name: 'Problem Management',  color: '#9333ea', desc: 'AI-assisted root cause analysis, predictive anomaly detection, structured problem resolution, and proactive problem identification from telemetry.' },
+  { name: 'Release Management',  color: '#059669', desc: 'AI-powered release gate assessment, end-to-end pipeline orchestration, go/no-go recommendation engine, and automated release readiness scoring.' },
 ];
 
 const LEVELS = [
-  { label: 'L0', title: 'Traditional', color: '#64748b', bg: '#f1f5f9', border: '#cbd5e1', desc: 'Completely manual operations with no standardized AI tool integration or workflow automation.' },
-  { label: 'L1', title: 'Assisted / Tool', color: '#dc2626', bg: '#fee2e2', border: '#fecaca', desc: 'Basic inline autocomplete, chat assistance, and ad-hoc individual AI tool experimentation.' },
-  { label: 'L2', title: 'Delegated / Assistant', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa', desc: 'AI acts as supervised copilot drafting tickets, RCA reports, and alerts under human review.' },
-  { label: 'L3', title: 'Supervised Agent', color: '#d97706', bg: '#fef3c7', border: '#fde68a', desc: 'Autonomous AI agents execute runbooks and orchestrate remediation with approval gates.' },
-  { label: 'L4', title: 'Autonomous Workforce', color: '#2563eb', bg: '#dbeafe', border: '#bfdbfe', desc: 'High-trust autonomous execution, automated safety nets, evaluation metrics, and guardrails.' },
-  { label: 'L5', title: 'Agentic Enterprise', color: '#166534', bg: '#dcfce7', border: '#bbf7d0', desc: 'Self-optimizing delivery loops, automated drift remediation, and fully autonomous operations.' },
+  { label: 'L0', title: 'Traditional',          color: '#64748b', bg: '#f1f5f9', border: '#cbd5e1', desc: 'Entirely manual operations. No AI tools embedded in service or incident workflows.' },
+  { label: 'L1', title: 'Assisted / Tool',       color: '#dc2626', bg: '#fee2e2', border: '#fecaca', desc: 'Basic AI chatbots, knowledge base search, and ad-hoc ticket classification.' },
+  { label: 'L2', title: 'Delegated / Assistant', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa', desc: 'AI assists with triage, drafts RCA reports, and classifies incidents under human review.' },
+  { label: 'L3', title: 'Supervised Agent',      color: '#d97706', bg: '#fef3c7', border: '#fde68a', desc: 'AI agents execute runbooks and orchestrate multi-step remediation with human approval gates.' },
+  { label: 'L4', title: 'Autonomous Workforce',  color: '#2563eb', bg: '#dbeafe', border: '#bfdbfe', desc: 'Agents handle known incidents end-to-end with automated rollback and safety guardrails.' },
+  { label: 'L5', title: 'Agentic Enterprise',    color: '#166534', bg: '#dcfce7', border: '#bbf7d0', desc: 'Self-healing operations, predictive problem prevention, and fully autonomous release pipelines.' },
 ];
 
 function getAMSDomainDiagram(name) {
   switch (name) {
     case 'Service Management':
       return (
-        <svg width="100%" height="100%" viewBox="0 0 240 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#F8FAFC" />
-          <rect x="25" y="15" width="190" height="100" rx="8" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1.5" />
-          <circle cx="75" cy="65" r="28" stroke="#E2E8F0" strokeWidth="4" />
-          <circle cx="75" cy="65" r="28" stroke="#4F46E5" strokeWidth="4" strokeDasharray="130 50" strokeDashoffset="35" />
-          <text x="75" y="62" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#4F46E5" textAnchor="middle">SLA GOAL</text>
-          <text x="75" y="73" fontFamily="var(--font-heading)" fontSize="9" fontWeight="800" fill="#0F172A" textAnchor="middle">99.8%</text>
-          <rect x="122" y="28" width="76" height="18" rx="4" fill="#EEF2FF" stroke="#4F46E5" strokeWidth="1.2" />
-          <circle cx="132" cy="37" r="4" fill="#4F46E5" />
-          <rect x="142" y="35" width="46" height="4" rx="2" fill="#CBD5E1" />
-          <rect x="122" y="52" width="76" height="18" rx="4" fill="#F1F5F9" />
-          <circle cx="132" cy="61" r="4" fill="#059669" />
-          <rect x="142" y="59" width="40" height="4" rx="2" fill="#CBD5E1" />
-          <rect x="122" y="76" width="76" height="18" rx="4" fill="#F1F5F9" />
-          <circle cx="132" cy="85" r="4" fill="#D97706" />
-          <rect x="142" y="83" width="50" height="4" rx="2" fill="#CBD5E1" />
+        <svg width="100%" height="100%" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#FFFFFF" />
+          <rect x="25" y="20" width="190" height="100" rx="6" fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="1.5" />
+          <circle cx="80" cy="75" r="28" stroke="#E2E8F0" strokeWidth="4" />
+          <circle cx="80" cy="75" r="28" stroke="#4F46E5" strokeWidth="4" strokeDasharray="120 55" strokeDashoffset="40" />
+          <text x="80" y="72" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#4F46E5" textAnchor="middle">SLA</text>
+          <text x="80" y="82" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#64748B" textAnchor="middle">98.5%</text>
+          <rect x="125" y="32" width="72" height="18" rx="4" fill="#EEF2FF" stroke="#4F46E5" strokeWidth="1.2" />
+          <circle cx="134" cy="41" r="4" fill="#4F46E5" />
+          <rect x="143" y="38" width="45" height="4" rx="2" fill="#CBD5E1" />
+          <rect x="125" y="56" width="72" height="18" rx="4" fill="#E2E8F0" />
+          <circle cx="134" cy="65" r="4" fill="#059669" />
+          <rect x="143" y="62" width="38" height="4" rx="2" fill="#CBD5E1" />
+          <rect x="125" y="80" width="72" height="18" rx="4" fill="#E2E8F0" />
+          <circle cx="134" cy="89" r="4" fill="#D97706" />
+          <rect x="143" y="86" width="52" height="4" rx="2" fill="#CBD5E1" />
+          <rect x="125" y="104" width="72" height="12" rx="3" fill="#E2E8F0" />
+          <rect x="143" y="108" width="30" height="4" rx="2" fill="#CBD5E1" />
         </svg>
       );
     case 'Incident Management':
       return (
-        <svg width="100%" height="100%" viewBox="0 0 240 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#F8FAFC" />
-          <rect x="25" y="15" width="190" height="100" rx="8" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1.5" />
-          <path d="M52 92L80 36L108 92H52Z" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1.8" strokeLinejoin="round" />
-          <text x="80" y="76" fontFamily="var(--font-heading)" fontSize="15" fontWeight="900" fill="#DC2626" textAnchor="middle">!</text>
-          <text x="80" y="89" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#DC2626" textAnchor="middle">P1 TRIAGE</text>
-          <rect x="126" y="32" width="74" height="16" rx="4" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1.2" />
-          <text x="163" y="43" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#DC2626" textAnchor="middle">AUTO-TRIAGE</text>
-          <path d="M163 48V56" stroke="#CBD5E1" strokeWidth="1.5" />
-          <rect x="126" y="56" width="74" height="16" rx="4" fill="#F1F5F9" />
-          <text x="163" y="67" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#475569" textAnchor="middle">RUNBOOK RUN</text>
-          <path d="M163 72V80" stroke="#CBD5E1" strokeWidth="1.5" />
-          <rect x="126" y="80" width="74" height="16" rx="4" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
-          <text x="163" y="91" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#166534" textAnchor="middle">RESOLVED ✓</text>
+        <svg width="100%" height="100%" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#FFFFFF" />
+          <rect x="25" y="20" width="190" height="100" rx="6" fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="1.5" />
+          <path d="M55 100L85 40L115 100H55Z" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1.8" strokeLinejoin="round" />
+          <text x="85" y="83" fontFamily="var(--font-heading)" fontSize="14" fontWeight="900" fill="#DC2626" textAnchor="middle">!</text>
+          <text x="85" y="97" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#DC2626" textAnchor="middle">P1</text>
+          <rect x="130" y="38" width="68" height="16" rx="4" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1.2" />
+          <text x="164" y="49" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#DC2626" textAnchor="middle">TRIAGE</text>
+          <path d="M164 54V62" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="130" y="62" width="68" height="16" rx="4" fill="#E2E8F0" />
+          <text x="164" y="73" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#64748B" textAnchor="middle">CLASSIFY</text>
+          <path d="M164 78V86" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="130" y="86" width="68" height="16" rx="4" fill="#E2E8F0" />
+          <text x="164" y="97" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#64748B" textAnchor="middle">ROUTE</text>
+          <path d="M164 102V110" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="130" y="110" width="68" height="12" rx="3" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
+          <text x="164" y="119" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#166534" textAnchor="middle">RESOLVED</text>
         </svg>
       );
     case 'Change Management':
       return (
-        <svg width="100%" height="100%" viewBox="0 0 240 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#F8FAFC" />
-          <rect x="25" y="15" width="190" height="100" rx="8" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1.5" />
-          <rect x="36" y="48" width="82" height="10" rx="5" fill="#E2E8F0" />
-          <rect x="36" y="48" width="56" height="10" rx="5" fill="#EA580C" />
-          <text x="77" y="38" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#EA580C" textAnchor="middle">RISK BLAST RADIUS</text>
-          <rect x="36" y="68" width="82" height="34" rx="5" fill="#FFEDD5" stroke="#EA580C" strokeWidth="1.2" />
-          <text x="77" y="82" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#EA580C" textAnchor="middle">RFC AUTOMATION</text>
-          <rect x="46" y="87" width="62" height="4" rx="2" fill="#CBD5E1" />
-          <path d="M148 60L165 46L182 60" stroke="#EA580C" strokeWidth="1.5" strokeDasharray="3 3" />
-          <rect x="140" y="60" width="50" height="20" rx="4" fill="#F1F5F9" />
-          <text x="165" y="73" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#475569" textAnchor="middle">CAB Review</text>
-          <path d="M165 80V90" stroke="#CBD5E1" strokeWidth="1.5" />
-          <rect x="140" y="90" width="50" height="16" rx="4" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
-          <text x="165" y="101" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#166534" textAnchor="middle">APPROVED</text>
+        <svg width="100%" height="100%" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#FFFFFF" />
+          <rect x="25" y="20" width="190" height="100" rx="6" fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="1.5" />
+          <rect x="38" y="55" width="80" height="10" rx="5" fill="#E2E8F0" />
+          <rect x="38" y="55" width="52" height="10" rx="5" fill="#EA580C" />
+          <text x="78" y="42" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#EA580C" textAnchor="middle">RISK SCORE</text>
+          <text x="78" y="51" fontFamily="var(--font-heading)" fontSize="8" fontWeight="600" fill="#64748B" textAnchor="middle">Medium</text>
+          <rect x="38" y="76" width="80" height="36" rx="5" fill="#FFEDD5" stroke="#EA580C" strokeWidth="1.2" />
+          <text x="78" y="91" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#EA580C" textAnchor="middle">CHANGE REQUEST</text>
+          <rect x="48" y="95" width="60" height="4" rx="2" fill="#CBD5E1" />
+          <rect x="48" y="102" width="40" height="4" rx="2" fill="#CBD5E1" />
+          <path d="M148 70L165 55L182 70" stroke="#EA580C" strokeWidth="1.5" strokeDasharray="3 3" />
+          <rect x="140" y="70" width="45" height="20" rx="4" fill="#E2E8F0" />
+          <text x="162" y="83" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#64748B" textAnchor="middle">CAB Review</text>
+          <path d="M162 90V100" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="140" y="100" width="45" height="18" rx="4" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
+          <text x="162" y="112" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#166534" textAnchor="middle">APPROVED</text>
         </svg>
       );
     case 'Problem Management':
       return (
-        <svg width="100%" height="100%" viewBox="0 0 240 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#F8FAFC" />
-          <rect x="25" y="15" width="190" height="100" rx="8" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1.5" />
-          <circle cx="120" cy="32" r="11" fill="#F3E8FF" stroke="#9333EA" strokeWidth="1.5" />
-          <text x="120" y="36" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#9333EA" textAnchor="middle">RCA</text>
-          <path d="M120 43V54" stroke="#9333EA" strokeWidth="1.5" />
-          <path d="M90 54H150" stroke="#9333EA" strokeWidth="1.5" />
-          <path d="M90 54V62" stroke="#9333EA" strokeWidth="1.5" />
-          <path d="M120 54V62" stroke="#9333EA" strokeWidth="1.5" />
-          <path d="M150 54V62" stroke="#9333EA" strokeWidth="1.5" />
-          <rect x="68" y="62" width="44" height="18" rx="4" fill="#F3E8FF" stroke="#9333EA" strokeWidth="1.2" />
-          <text x="90" y="74" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#9333EA" textAnchor="middle">Telemetry</text>
-          <rect x="98" y="62" width="44" height="18" rx="4" fill="#F1F5F9" />
-          <text x="120" y="74" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#475569" textAnchor="middle">Latency</text>
-          <rect x="128" y="62" width="44" height="18" rx="4" fill="#F1F5F9" />
-          <text x="150" y="74" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#475569" textAnchor="middle">Memory</text>
-          <rect x="68" y="90" width="104" height="18" rx="5" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
-          <text x="120" y="102" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#166534" textAnchor="middle">Root Cause Prevented ✓</text>
+        <svg width="100%" height="100%" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#FFFFFF" />
+          <rect x="25" y="20" width="190" height="100" rx="6" fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="1.5" />
+          <circle cx="120" cy="35" r="10" fill="#F3E8FF" stroke="#9333EA" strokeWidth="1.5" />
+          <text x="120" y="39" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#9333EA" textAnchor="middle">RCA</text>
+          <path d="M120 45V57" stroke="#9333EA" strokeWidth="1.5" />
+          <path d="M90 57H150" stroke="#9333EA" strokeWidth="1.5" />
+          <path d="M90 57V65" stroke="#9333EA" strokeWidth="1.5" />
+          <path d="M120 57V65" stroke="#9333EA" strokeWidth="1.5" />
+          <path d="M150 57V65" stroke="#9333EA" strokeWidth="1.5" />
+          <rect x="68" y="65" width="44" height="18" rx="4" fill="#F3E8FF" stroke="#9333EA" strokeWidth="1.2" />
+          <text x="90" y="77" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#9333EA" textAnchor="middle">DB Conn</text>
+          <rect x="98" y="65" width="44" height="18" rx="4" fill="#E2E8F0" />
+          <text x="120" y="77" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#64748B" textAnchor="middle">Network</text>
+          <rect x="128" y="65" width="44" height="18" rx="4" fill="#E2E8F0" />
+          <text x="150" y="77" fontFamily="var(--font-heading)" fontSize="7" fontWeight="600" fill="#64748B" textAnchor="middle">Memory</text>
+          <rect x="68" y="100" width="104" height="20" rx="5" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
+          <text x="120" y="113" fontFamily="var(--font-heading)" fontSize="7" fontWeight="700" fill="#166534" textAnchor="middle">Root Cause Identified ✓</text>
         </svg>
       );
     case 'Release Management':
       return (
-        <svg width="100%" height="100%" viewBox="0 0 240 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#F8FAFC" />
-          <rect x="25" y="15" width="190" height="100" rx="8" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1.5" />
-          <rect x="36" y="46" width="38" height="26" rx="4" fill="#ECFDF5" stroke="#059669" strokeWidth="1.2" />
-          <text x="55" y="58" fontFamily="var(--font-heading)" fontSize="6.5" fontWeight="700" fill="#059669" textAnchor="middle">AUDIT</text>
-          <circle cx="55" cy="65" r="3.5" fill="#059669" />
-          <path d="M74 59H86" stroke="#CBD5E1" strokeWidth="1.5" />
-          <rect x="86" y="46" width="38" height="26" rx="4" fill="#ECFDF5" stroke="#059669" strokeWidth="1.2" />
-          <text x="105" y="58" fontFamily="var(--font-heading)" fontSize="6.5" fontWeight="700" fill="#059669" textAnchor="middle">STAGE</text>
-          <circle cx="105" cy="65" r="3.5" fill="#059669" />
-          <path d="M124 59H136" stroke="#CBD5E1" strokeWidth="1.5" />
-          <rect x="136" y="46" width="38" height="26" rx="4" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.2" />
-          <text x="155" y="57" fontFamily="var(--font-heading)" fontSize="5.5" fontWeight="700" fill="#D97706" textAnchor="middle">GATE</text>
-          <text x="155" y="66" fontFamily="var(--font-heading)" fontSize="5.5" fontWeight="700" fill="#D97706" textAnchor="middle">CHECK</text>
-          <path d="M174 59H186" stroke="#CBD5E1" strokeWidth="1.5" />
-          <rect x="186" y="46" width="26" height="26" rx="4" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
-          <text x="199" y="59" fontFamily="var(--font-heading)" fontSize="6" fontWeight="700" fill="#166534" textAnchor="middle">PROD</text>
-          <rect x="60" y="88" width="120" height="18" rx="5" fill="#ECFDF5" stroke="#059669" strokeWidth="1.2" />
-          <text x="120" y="100" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#059669" textAnchor="middle">v3.2.0 DEPLOYED ✓</text>
+        <svg width="100%" height="100%" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#FFFFFF" />
+          <rect x="25" y="20" width="190" height="100" rx="6" fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="1.5" />
+          <rect x="35" y="52" width="36" height="26" rx="4" fill="#ECFDF5" stroke="#059669" strokeWidth="1.2" />
+          <text x="53" y="65" fontFamily="var(--font-heading)" fontSize="6.5" fontWeight="700" fill="#059669" textAnchor="middle">BUILD</text>
+          <circle cx="53" cy="72" r="4" fill="#059669" />
+          <path d="M71 65H82" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="83" y="52" width="36" height="26" rx="4" fill="#ECFDF5" stroke="#059669" strokeWidth="1.2" />
+          <text x="101" y="65" fontFamily="var(--font-heading)" fontSize="6.5" fontWeight="700" fill="#059669" textAnchor="middle">TEST</text>
+          <circle cx="101" cy="72" r="4" fill="#059669" />
+          <path d="M119 65H130" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="131" y="52" width="36" height="26" rx="4" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.2" />
+          <text x="149" y="63" fontFamily="var(--font-heading)" fontSize="5.5" fontWeight="700" fill="#D97706" textAnchor="middle">GATE</text>
+          <text x="149" y="72" fontFamily="var(--font-heading)" fontSize="5.5" fontWeight="700" fill="#D97706" textAnchor="middle">CHECK</text>
+          <path d="M167 65H178" stroke="#CBD5E1" strokeWidth="1.5" />
+          <rect x="179" y="52" width="30" height="26" rx="4" fill="#DCFCE7" stroke="#166534" strokeWidth="1.2" />
+          <text x="194" y="65" fontFamily="var(--font-heading)" fontSize="5.5" fontWeight="700" fill="#166534" textAnchor="middle">PROD</text>
+          <rect x="60" y="100" width="120" height="18" rx="5" fill="#ECFDF5" stroke="#059669" strokeWidth="1.2" />
+          <text x="120" y="112" fontFamily="var(--font-heading)" fontSize="8" fontWeight="700" fill="#059669" textAnchor="middle">v2.4.1 — RELEASED ✓</text>
         </svg>
       );
     default:
@@ -171,7 +143,7 @@ export default function AMSPage() {
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', paddingBottom: '36px' }}>
 
-      {/* ── Hero Section (Enterprise Standard) ─────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section style={{
         background: '#ffffff',
         border: '1px solid #e2e8f0',
@@ -209,7 +181,7 @@ export default function AMSPage() {
           marginBottom: '20px',
         }}>
           <span className="material-icons" style={{ fontSize: '1rem' }}>support_agent</span>
-          FRAMEWORK 2 · AMS INTELLIGENCE
+          FRAMEWORK 2 — AMS INTELLIGENCE
         </div>
 
         {/* Hero Title */}
@@ -228,7 +200,7 @@ export default function AMSPage() {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}>
-            AI Operations Maturity
+            AI Maturity Assessment
           </span>
         </h1>
 
@@ -241,7 +213,7 @@ export default function AMSPage() {
           lineHeight: 1.75,
           fontWeight: 500,
         }}>
-          A targeted <strong style={{ color: '#4f46e5' }}>operations audit</strong> covering Service Management, Incident Triage, Change Blast Radius, RCA Pattern Clustering, and Autonomous Release Orchestration.
+          A focused <strong style={{ color: '#4f46e5' }}>10-question audit</strong> across 5 operations domains — measuring how deeply AI is embedded in your organisation&apos;s service management, incident response, change control, problem resolution, and release orchestration.
         </p>
 
         {/* CTA Group */}
@@ -255,7 +227,7 @@ export default function AMSPage() {
             <>
               <Link href="/signup" className="btn-cta-amber" style={{ fontSize: '0.98rem', padding: '14px 32px' }}>
                 <span className="material-icons" style={{ fontSize: '1.2rem' }}>play_arrow</span>
-                Start Free Assessment →
+                Get Started Free →
               </Link>
               <Link href="/login" className="btn-secondary-action" style={{ fontSize: '0.98rem', padding: '14px 32px' }}>
                 Sign In
@@ -280,19 +252,19 @@ export default function AMSPage() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="material-icons" style={{ color: '#4f46e5', fontSize: '1.1rem' }}>check_circle</span>
-            Focused Operations Questionnaire
+            10 Questions
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="material-icons" style={{ color: '#1e40af', fontSize: '1.1rem' }}>check_circle</span>
-            5 Critical Operations Domains
+            5 Operations Domains
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span className="material-icons" style={{ color: '#dc2626', fontSize: '1.1rem' }}>check_circle</span>
-            Autonomous MTTR Mitigation
+            <span className="material-icons" style={{ color: '#0284c7', fontSize: '1.1rem' }}>check_circle</span>
+            L0–L5 Maturity Scale
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="material-icons" style={{ color: '#d97706', fontSize: '1.1rem' }}>check_circle</span>
-            Instant Executive Radar & Roadmap
+            AI Powered Analysis
           </div>
         </div>
       </section>
@@ -302,7 +274,7 @@ export default function AMSPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
           <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>
-            The 5 Core Operations Domains
+            5 Operations Domains
           </span>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
         </div>
@@ -326,31 +298,17 @@ export default function AMSPage() {
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)'; }}
               >
                 {/* SVG Illustration Container */}
-                <div style={{ width: '100%', height: '130px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+                <div style={{ width: '100%', height: '140px', background: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
                   {getAMSDomainDiagram(area.name)}
                 </div>
 
                 <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: area.color, fontFamily: 'var(--font-heading)', background: `${area.color}12`, padding: '2px 8px', borderRadius: '4px' }}>
-                      {area.badge}
-                    </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                     <span className="material-icons" style={{ color: area.color, fontSize: '1.2rem' }}>{area.icon}</span>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>{area.name}</h3>
                   </div>
 
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '8px', color: '#0f172a' }}>{area.name}</h3>
-                  <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.6, marginBottom: '16px', flexGrow: 1 }}>{area.desc}</p>
-
-                  <div style={{ height: '1px', background: '#f1f5f9', marginBottom: '12px' }} />
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {area.capabilities.map((c, ci) => (
-                      <div key={ci} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.76rem', color: '#64748b' }}>
-                        <span className="material-icons" style={{ fontSize: '0.9rem', color: area.color }}>check</span>
-                        {c}
-                      </div>
-                    ))}
-                  </div>
+                  <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.65, margin: 0, flexGrow: 1 }}>{area.desc}</p>
                 </div>
               </div>
             </div>
@@ -358,12 +316,12 @@ export default function AMSPage() {
         </div>
       </section>
 
-      {/* ── AI Maturity Progression Scale (L0 → L5) ───────────────────────── */}
+      {/* ── AI Maturity Scale ─────────────────────────────────────────────── */}
       <section id="maturity" style={{ marginBottom: '52px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
           <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>
-            AMS Operations AI Maturity Rubric (L0 → L5)
+            AI Maturity Scale
           </span>
           <div style={{ height: '1px', flex: 1, background: '#e2e8f0' }} />
         </div>
@@ -412,10 +370,10 @@ export default function AMSPage() {
         boxShadow: '0 12px 36px rgba(79, 70, 229, 0.25)',
       }}>
         <h2 style={{ fontSize: '1.8rem', fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: '10px' }}>
-          Ready to Benchmark Your Operations Team?
+          Ready to benchmark your operations team?
         </h2>
-        <p style={{ maxWidth: '600px', margin: '0 auto 28px', color: '#c7d2fe', fontSize: '0.95rem', lineHeight: 1.6 }}>
-          Complete the AMS assessment to discover your operational AI maturity score, benchmark incident response capabilities, and unlock an actionable roadmap.
+        <p style={{ maxWidth: '620px', margin: '0 auto 28px', color: '#c7d2fe', fontSize: '0.95rem', lineHeight: 1.6 }}>
+          Complete the 10-question AMS assessment to receive your personalised AI maturity report with domain-level scores and targeted recommendations for your operations team.
         </p>
         <Link
           href={user ? '/assessment?framework=AMS' : '/signup'}
@@ -439,7 +397,7 @@ export default function AMSPage() {
           onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = '#d97706'; }}
         >
           <span className="material-icons" style={{ fontSize: '1.2rem' }}>play_arrow</span>
-          {user ? 'Start AMS Assessment →' : 'Launch Free Assessment →'}
+          {user ? 'Start Assessment →' : 'Get Started Free →'}
         </Link>
       </section>
 
