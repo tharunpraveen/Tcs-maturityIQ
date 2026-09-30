@@ -171,6 +171,7 @@ async function initSchema() {
     // Safe column additions for existing tables
     const userCols = [
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name      VARCHAR(255)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS name           VARCHAR(255)`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS employee_id    VARCHAR(50)`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS business_group VARCHAR(255)`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS account        VARCHAR(255)`,
@@ -178,12 +179,15 @@ async function initSchema() {
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at  TIMESTAMP`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at     TIMESTAMP NOT NULL DEFAULT NOW()`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash  VARCHAR(255)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS password       VARCHAR(255)`,
     ];
     for (const sql of userCols) await client.query(sql).catch(() => {});
 
-    // Sync password → password_hash for existing rows
+    // Sync password ↔ password_hash and name ↔ full_name for existing rows
     await client.query(`UPDATE users SET password_hash = password WHERE password_hash IS NULL AND password IS NOT NULL`).catch(() => {});
+    await client.query(`UPDATE users SET password = password_hash WHERE password IS NULL AND password_hash IS NOT NULL`).catch(() => {});
     await client.query(`UPDATE users SET full_name = name WHERE full_name IS NULL AND name IS NOT NULL`).catch(() => {});
+    await client.query(`UPDATE users SET name = full_name WHERE name IS NULL AND full_name IS NOT NULL`).catch(() => {});
 
     // Indexes
     await client.query(`CREATE INDEX IF NOT EXISTS idx_users_email       ON users (LOWER(email))`);
@@ -400,14 +404,27 @@ async function initSchema() {
     }
 
     // ── Seeds ─────────────────────────────────────────────────
-    await client.query(`
-      INSERT INTO users (id, email, password_hash, password, role, full_name, name)
-      VALUES ('admin_user','admin@sdlc.com',
-        '$2a$10$e3lC5nLrQEWCmu15W69ux./xMB45aDURPA3skiFXmcmmySIWCAD.G',
-        '$2a$10$e3lC5nLrQEWCmu15W69ux./xMB45aDURPA3skiFXmcmmySIWCAD.G',
-        'admin','System Administrator','System Administrator')
-      ON CONFLICT (id) DO NOTHING
-    `);
+    try {
+      await client.query(`
+        INSERT INTO users (id, email, password_hash, password, role, full_name, name)
+        VALUES ('admin_user','admin@sdlc.com',
+          '$2a$10$e3lC5nLrQEWCmu15W69ux./xMB45aDURPA3skiFXmcmmySIWCAD.G',
+          '$2a$10$e3lC5nLrQEWCmu15W69ux./xMB45aDURPA3skiFXmcmmySIWCAD.G',
+          'admin','System Administrator','System Administrator')
+        ON CONFLICT (id) DO UPDATE SET
+          password_hash = COALESCE(users.password_hash, EXCLUDED.password_hash),
+          password      = COALESCE(users.password, EXCLUDED.password)
+      `);
+    } catch {
+      await client.query(`
+        INSERT INTO users (id, email, password_hash, role, full_name)
+        VALUES ('admin_user','admin@sdlc.com',
+          '$2a$10$e3lC5nLrQEWCmu15W69ux./xMB45aDURPA3skiFXmcmmySIWCAD.G',
+          'admin','System Administrator')
+        ON CONFLICT (id) DO UPDATE SET
+          password_hash = COALESCE(users.password_hash, EXCLUDED.password_hash)
+      `).catch(() => {});
+    }
 
     await client.query(`
       INSERT INTO settings (id, active_ai_provider, api_keys, api_endpoints, ollama_url, ollama_model)
@@ -455,7 +472,11 @@ export async function writeAuditLog({ userId, action, entityType, entityId, oldV
 
 // USER METHODS
 export async function getUsers() {
-  return query('SELECT id, email, role, name, gender, business_group, employee_id, account, created_at FROM users ORDER BY created_at DESC');
+  try {
+    return await query('SELECT id, email, role, COALESCE(full_name, name) as name, full_name, gender, business_group, employee_id, account, created_at FROM users ORDER BY created_at DESC');
+  } catch {
+    return await query('SELECT id, email, role, full_name as name, full_name, gender, business_group, employee_id, account, created_at FROM users ORDER BY created_at DESC');
+  }
 }
 
 export async function createUser(email, password, extraData = {}) {
@@ -471,10 +492,17 @@ export async function createUser(email, password, extraData = {}) {
   const employeeId     = (extraData.employeeId     || '').trim();
   const account        = (extraData.account        || '').trim();
 
-  await query(
-    'INSERT INTO users (id, email, password, role, name, business_group, employee_id, account) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
-    [id, email.toLowerCase(), hashedPassword, 'user', name || null, businessGroup || null, employeeId || null, account || null]
-  );
+  try {
+    await query(
+      'INSERT INTO users (id, email, password, password_hash, role, name, full_name, business_group, employee_id, account) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+      [id, email.toLowerCase(), hashedPassword, hashedPassword, 'user', name || null, name || null, businessGroup || null, employeeId || null, account || null]
+    );
+  } catch {
+    await query(
+      'INSERT INTO users (id, email, password_hash, role, full_name, business_group, employee_id, account) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+      [id, email.toLowerCase(), hashedPassword, 'user', name || null, businessGroup || null, employeeId || null, account || null]
+    );
+  }
   return { id, email: email.toLowerCase(), name, businessGroup, employeeId, account };
 }
 
@@ -505,11 +533,19 @@ export async function authenticateUser(email, password) {
 
 
 export async function getUserById(id) {
-  const rows = await query(
-    'SELECT id, email, role, name, full_name, business_group, employee_id, account, created_at FROM users WHERE id = $1',
-    [id]
-  );
-  if (!rows[0]) return null;
+  let rows;
+  try {
+    rows = await query(
+      'SELECT id, email, role, name, full_name, business_group, employee_id, account, created_at FROM users WHERE id = $1',
+      [id]
+    );
+  } catch {
+    rows = await query(
+      'SELECT id, email, role, full_name as name, full_name, business_group, employee_id, account, created_at FROM users WHERE id = $1',
+      [id]
+    );
+  }
+  if (!rows || !rows[0]) return null;
   const u = rows[0];
   return {
     id:            u.id,
@@ -526,18 +562,34 @@ export async function getUserById(id) {
 export async function ensureAdminUser(passwordHash) {
   const rows = await query("SELECT * FROM users WHERE email = 'admin@sdlc.com'");
   if (rows.length === 0) {
-    await query(
-      'INSERT INTO users (id, email, password, role) VALUES ($1, $2, $3, $4)',
-      ['admin_user', 'admin@sdlc.com', passwordHash, 'admin']
-    );
-    return { id: 'admin_user', email: 'admin@sdlc.com', role: 'admin', name: '' };
+    try {
+      await query(
+        `INSERT INTO users (id, email, password, password_hash, role, name, full_name)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        ['admin_user', 'admin@sdlc.com', passwordHash, passwordHash, 'admin', 'System Administrator', 'System Administrator']
+      );
+    } catch {
+      await query(
+        `INSERT INTO users (id, email, password_hash, role, full_name)
+         VALUES ($1, $2, $3, $4, $5)`,
+        ['admin_user', 'admin@sdlc.com', passwordHash, 'admin', 'System Administrator']
+      );
+    }
+    return { id: 'admin_user', email: 'admin@sdlc.com', role: 'admin', name: 'System Administrator' };
   }
   const row = rows[0];
-  return { id: row.id, email: row.email, role: row.role, name: row.name || '' };
+  if (!row.password_hash && passwordHash) {
+    await query("UPDATE users SET password_hash = $1 WHERE id = $2", [passwordHash, row.id]).catch(() => {});
+  }
+  return { id: row.id, email: row.email, role: row.role, name: row.full_name || row.name || '' };
 }
 
 export async function updateUserProfile(userId, name) {
-  await query('UPDATE users SET name = $1, full_name = $1, updated_at = NOW() WHERE id = $2', [name, userId]);
+  try {
+    await query('UPDATE users SET name = $1, full_name = $1, updated_at = NOW() WHERE id = $2', [name, userId]);
+  } catch {
+    await query('UPDATE users SET full_name = $1, updated_at = NOW() WHERE id = $2', [name, userId]);
+  }
   return getUserById(userId);
 }
 
