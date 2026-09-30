@@ -32,7 +32,7 @@ const FRAMEWORK_CONFIG = {
   },
 };
 
-// SVG Radar Spider Chart component
+// Dynamic SVG Radar Spider Chart component
 function RadarSpiderChart({ framework, data, activeDimension, onHoverDimension }) {
   const fw = FRAMEWORK_CONFIG[framework] || FRAMEWORK_CONFIG.SDLC;
   const labels = fw.domains;
@@ -41,12 +41,14 @@ function RadarSpiderChart({ framework, data, activeDimension, onHoverDimension }
   const cy = 150;
   const radius = 105;
 
+  const hasData = data && data.some(v => v > 0);
+
   // Concentric polygon levels: 20%, 40%, 60%, 80%, 100%
   const levels = [0.2, 0.4, 0.6, 0.8, 1.0];
 
   const getCoordinates = (index, value) => {
     const angle = -Math.PI / 2 + (2 * Math.PI * index) / count;
-    const r = radius * Math.max(0.08, Math.min(value, 1.0));
+    const r = radius * Math.max(0.04, Math.min(value, 1.0));
     return {
       x: cx + r * Math.cos(angle),
       y: cy + r * Math.sin(angle),
@@ -63,7 +65,7 @@ function RadarSpiderChart({ framework, data, activeDimension, onHoverDimension }
       <svg viewBox="0 0 350 300" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
         <defs>
           <radialGradient id={`radarGlow-${framework}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor={fw.color} stopOpacity="0.32" />
+            <stop offset="0%" stopColor={fw.color} stopOpacity="0.35" />
             <stop offset="100%" stopColor={fw.color} stopOpacity="0.05" />
           </radialGradient>
         </defs>
@@ -106,14 +108,16 @@ function RadarSpiderChart({ framework, data, activeDimension, onHoverDimension }
           );
         })}
 
-        {/* Data Polygon */}
-        <polygon
-          points={polygonPoints}
-          fill={`url(#radarGlow-${framework})`}
-          stroke={fw.color}
-          strokeWidth="2.5"
-          style={{ transition: 'all 0.3s ease' }}
-        />
+        {/* Data Polygon (only if assessments exist) */}
+        {hasData && (
+          <polygon
+            points={polygonPoints}
+            fill={`url(#radarGlow-${framework})`}
+            stroke={fw.color}
+            strokeWidth="2.5"
+            style={{ transition: 'all 0.3s ease' }}
+          />
+        )}
 
         {/* Vertices & Labels */}
         {data.map((val, i) => {
@@ -126,17 +130,19 @@ function RadarSpiderChart({ framework, data, activeDimension, onHoverDimension }
 
           return (
             <g key={i}>
-              <circle
-                cx={x}
-                cy={y}
-                r={isHovered ? 6 : 4}
-                fill={fw.color}
-                stroke="#ffffff"
-                strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.2s' }}
-                onMouseEnter={() => onHoverDimension && onHoverDimension(i)}
-                onMouseLeave={() => onHoverDimension && onHoverDimension(null)}
-              />
+              {hasData && (
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={isHovered ? 6 : 4}
+                  fill={fw.color}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                  onMouseEnter={() => onHoverDimension && onHoverDimension(i)}
+                  onMouseLeave={() => onHoverDimension && onHoverDimension(null)}
+                />
+              )}
               <text
                 x={lx}
                 y={ly}
@@ -155,6 +161,31 @@ function RadarSpiderChart({ framework, data, activeDimension, onHoverDimension }
           );
         })}
       </svg>
+
+      {/* Overlay when no assessment data exists for this framework */}
+      {!hasData && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(1px)',
+          borderRadius: '12px',
+          textAlign: 'center',
+          padding: '20px',
+        }}>
+          <span className="material-icons" style={{ fontSize: '2rem', color: '#94a3b8', marginBottom: '6px' }}>insights</span>
+          <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#334155', fontFamily: 'var(--font-heading)' }}>
+            No {framework} Assessments Yet
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#64748b', maxWidth: '240px', marginTop: '2px' }}>
+            Complete your first {framework} audit to visualize real-time maturity across all 5 dimensions.
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -176,24 +207,75 @@ function CircularGauge({ value, color, size = 68, strokeWidth = 6 }) {
           stroke="#e2e8f0"
           strokeWidth={strokeWidth}
         />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-        />
+        {value != null && value > 0 && (
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+          />
+        )}
       </svg>
       <span style={{ position: 'absolute', fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-heading)', color: '#0f172a' }}>
-        {value ? `${value}%` : '—'}
+        {value != null && value > 0 ? `${value}%` : '—'}
       </span>
     </div>
   );
+}
+
+// Helper to generate dynamic sparkline SVG path from an array of historical score points
+function generateSparkline(scoresList) {
+  if (!scoresList || scoresList.length === 0) {
+    return 'M 0 16 L 160 16';
+  }
+  if (scoresList.length === 1) {
+    const y = Math.round(24 - (Math.max(0, Math.min(scoresList[0], 100)) / 100) * 18);
+    return `M 0 ${y} L 160 ${y}`;
+  }
+  const step = 160 / (scoresList.length - 1);
+  return scoresList.map((val, i) => {
+    const x = Math.round(i * step);
+    const y = Math.round(24 - (Math.max(0, Math.min(val, 100)) / 100) * 18);
+    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+  }).join(' ');
+}
+
+// Helper to dynamically calculate average scores per domain from raw assessment scores
+function calculateDomainScores(assessmentList, domains) {
+  const result = {};
+  domains.forEach(domain => {
+    let sum = 0;
+    let count = 0;
+    const targetClean = domain.toLowerCase().replace(/[^a-z]/g, '');
+
+    assessmentList.forEach(a => {
+      if (!a.scores) return;
+      const rawScores = a.scores;
+      const matchingKey = Object.keys(rawScores).find(k => {
+        const kClean = k.toLowerCase().replace(/[^a-z]/g, '');
+        return kClean === targetClean || kClean.startsWith(targetClean.slice(0, 4));
+      });
+
+      if (matchingKey && rawScores[matchingKey] != null) {
+        const val = Number(rawScores[matchingKey]);
+        if (!isNaN(val)) {
+          // If score is stored on a 0-5 scale, normalize to percentage (0-100%)
+          const pct = val <= 5 ? (val / 5) * 100 : val;
+          sum += pct;
+          count++;
+        }
+      }
+    });
+
+    result[domain] = count > 0 ? Math.round(sum / count) : 0;
+  });
+  return result;
 }
 
 export default function Dashboard() {
@@ -219,14 +301,11 @@ export default function Dashboard() {
   const [profileError, setProfileError] = useState(null);
 
   useEffect(() => {
-    if (!authLoading && !user) router.push('/login');
-    else if (user) {
-      if (user.role === 'admin' || user.email === 'admin@sdlc.com') {
-        router.push('/admin');
-      } else {
-        fetchDashboardData();
-        setProfileName(user.name || '');
-      }
+    if (!authLoading && !user) {
+      router.push('/login');
+    } else if (user) {
+      fetchDashboardData();
+      setProfileName(user.name || '');
     }
   }, [user, authLoading, router]);
 
@@ -317,36 +396,66 @@ export default function Dashboard() {
     }
   };
 
-  // Metrics calculations
+  // ─── 100% Dynamic Metric Calculations ──────────────────────────────────────
   const sdlcAssessments = useMemo(() => assessments.filter(a => (a.framework || 'SDLC') === 'SDLC'), [assessments]);
   const amsAssessments = useMemo(() => assessments.filter(a => a.framework === 'AMS'), [assessments]);
 
+  const totalCount = assessments.length;
   const sdlcCount = sdlcAssessments.length;
   const amsCount = amsAssessments.length;
 
   const avgScore = useMemo(() => {
-    if (assessments.length === 0) return 78; // baseline demonstration
+    if (assessments.length === 0) return null;
     return Math.round(assessments.reduce((s, a) => s + (a.overallScore || 0), 0) / assessments.length);
   }, [assessments]);
 
   const sdlcAvgScore = useMemo(() => {
-    if (sdlcCount === 0) return 84;
+    if (sdlcCount === 0) return null;
     return Math.round(sdlcAssessments.reduce((s, a) => s + (a.overallScore || 0), 0) / sdlcCount);
   }, [sdlcAssessments, sdlcCount]);
 
   const amsAvgScore = useMemo(() => {
-    if (amsCount === 0) return 72;
+    if (amsCount === 0) return null;
     return Math.round(amsAssessments.reduce((s, a) => s + (a.overallScore || 0), 0) / amsCount);
   }, [amsAssessments, amsCount]);
 
-  // Dynamic radar dimension scores (fallback to verified baseline benchmarks if initial)
+  // Real domain score breakdowns
+  const sdlcDomainScores = useMemo(() => {
+    return calculateDomainScores(sdlcAssessments, FRAMEWORK_CONFIG.SDLC.domains);
+  }, [sdlcAssessments]);
+
+  const amsDomainScores = useMemo(() => {
+    return calculateDomainScores(amsAssessments, FRAMEWORK_CONFIG.AMS.domains);
+  }, [amsAssessments]);
+
+  // Active Radar scores
+  const activeDomainScores = useMemo(() => {
+    return radarFramework === 'SDLC' ? sdlcDomainScores : amsDomainScores;
+  }, [radarFramework, sdlcDomainScores, amsDomainScores]);
+
   const radarScores = useMemo(() => {
-    if (radarFramework === 'SDLC') {
-      return [92, 84, 94, 88, 91]; // Requirements, Architecture, Development, Testing, Deployment
-    } else {
-      return [86, 74, 80, 72, 78]; // Service Mgmt, Incident Mgmt, Change Mgmt, Problem Mgmt, Release Mgmt
-    }
-  }, [radarFramework]);
+    const domains = FRAMEWORK_CONFIG[radarFramework]?.domains || [];
+    return domains.map(d => activeDomainScores[d] || 0);
+  }, [radarFramework, activeDomainScores]);
+
+  // Real chronological score arrays for dynamic sparklines
+  const chronologicalAssessments = useMemo(() => {
+    return [...assessments].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }, [assessments]);
+
+  const totalSparkline = useMemo(() => {
+    return generateSparkline(chronologicalAssessments.map(a => a.overallScore || 0));
+  }, [chronologicalAssessments]);
+
+  const sdlcSparkline = useMemo(() => {
+    const list = chronologicalAssessments.filter(a => (a.framework || 'SDLC') === 'SDLC');
+    return generateSparkline(list.map(a => a.overallScore || 0));
+  }, [chronologicalAssessments]);
+
+  const amsSparkline = useMemo(() => {
+    const list = chronologicalAssessments.filter(a => a.framework === 'AMS');
+    return generateSparkline(list.map(a => a.overallScore || 0));
+  }, [chronologicalAssessments]);
 
   // Filtered & Paginated assessments
   const filteredAssessments = useMemo(() => {
@@ -375,7 +484,7 @@ export default function Dashboard() {
             <span className="visually-hidden">Loading...</span>
           </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', fontFamily: 'var(--font-heading)' }}>
-            Initializing TCS MaturityIQ Dashboard…
+            Loading live assessment data…
           </p>
         </div>
       </div>
@@ -542,12 +651,14 @@ export default function Dashboard() {
                 margin: 0,
                 letterSpacing: '-0.02em',
               }}>
-                Welcome to TCS MaturityIQ Dashboard
+                {totalCount > 0 ? `Welcome back, ${getDisplayName()}` : `Welcome, ${getDisplayName()}`}
               </h1>
               <span className="material-icons" style={{ color: '#d97706', fontSize: '1.6rem' }}>verified</span>
             </div>
             <p style={{ color: '#64748b', fontSize: '0.92rem', margin: 0, fontWeight: 500 }}>
-              Enterprise AI maturity assessment & analytics cockpit for engineering and operations.
+              {totalCount > 0
+                ? `You have completed ${totalCount} assessment${totalCount > 1 ? 's' : ''} across SDLC and AMS frameworks.`
+                : 'Get started by running your first AI Maturity assessment for SDLC or AMS.'}
             </p>
           </div>
 
@@ -579,7 +690,7 @@ export default function Dashboard() {
 
         {activeTab === 'dashboard' ? (
           <>
-            {/* ── 4 KPI Bento Metric Cards ── */}
+            {/* ── 4 KPI Bento Metric Cards (100% Dynamic) ── */}
             <div className="row g-3 mb-4">
               {/* Card 1: Total Assessments */}
               <div className="col-lg-3 col-sm-6">
@@ -598,15 +709,15 @@ export default function Dashboard() {
                       background: '#dcfce7', padding: '3px 8px', borderRadius: '100px',
                       display: 'flex', alignItems: 'center', gap: '3px',
                     }}>
-                      ▲ 10%
+                      {totalCount > 0 ? `${totalCount} Audits` : '0 Audits'}
                     </span>
                   </div>
                   <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                    {assessments.length > 0 ? assessments.length : '48'}
+                    {totalCount}
                   </div>
                   <div style={{ marginTop: '12px', height: '24px' }}>
                     <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%' }}>
-                      <path d="M 0 18 Q 30 22, 60 12 T 120 8 T 160 4" fill="none" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" />
+                      <path d={totalSparkline} fill="none" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" />
                     </svg>
                   </div>
                 </div>
@@ -623,26 +734,33 @@ export default function Dashboard() {
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Avg Maturity Score</span>
-                    <span style={{
-                      fontSize: '0.72rem', fontWeight: 700, color: '#d97706',
-                      background: '#fef3c7', padding: '3px 8px', borderRadius: '100px',
-                      display: 'flex', alignItems: 'center', gap: '3px',
-                    }}>
-                      ▼ 78%
-                    </span>
+                    {avgScore !== null ? (
+                      <span style={{
+                        fontSize: '0.72rem', fontWeight: 700,
+                        color: getMaturityTier(avgScore).color,
+                        background: getMaturityTier(avgScore).bg,
+                        padding: '3px 8px', borderRadius: '100px',
+                      }}>
+                        {getMaturityTier(avgScore).level} · {getMaturityTier(avgScore).name}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b', background: '#f1f5f9', padding: '3px 8px', borderRadius: '100px' }}>
+                        No audits
+                      </span>
+                    )}
                   </div>
                   <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                    {avgScore}%
+                    {avgScore !== null ? `${avgScore}%` : '—'}
                   </div>
                   <div style={{ marginTop: '12px', height: '24px' }}>
                     <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%' }}>
-                      <path d="M 0 14 Q 40 4, 80 18 T 130 10 T 160 6" fill="none" stroke="#d97706" strokeWidth="2.2" strokeLinecap="round" />
+                      <path d={totalSparkline} fill="none" stroke="#d97706" strokeWidth="2.2" strokeLinecap="round" />
                     </svg>
                   </div>
                 </div>
               </div>
 
-              {/* Card 3: SDLC AI Velocity */}
+              {/* Card 3: SDLC AI Velocity / Maturity */}
               <div className="col-lg-3 col-sm-6">
                 <div style={{
                   background: '#ffffff',
@@ -657,21 +775,21 @@ export default function Dashboard() {
                       fontSize: '0.72rem', fontWeight: 700, color: '#166534',
                       background: '#dcfce7', padding: '3px 8px', borderRadius: '100px',
                     }}>
-                      ▲ {sdlcAvgScore}%
+                      {sdlcCount > 0 ? `${sdlcCount} Audit${sdlcCount > 1 ? 's' : ''}` : '0 Audits'}
                     </span>
                   </div>
                   <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#166534', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                    {sdlcAvgScore}%
+                    {sdlcAvgScore !== null ? `${sdlcAvgScore}%` : '—'}
                   </div>
                   <div style={{ marginTop: '12px', height: '24px' }}>
                     <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%' }}>
-                      <path d="M 0 20 Q 30 18, 60 14 T 110 6 T 160 2" fill="none" stroke="#166534" strokeWidth="2.2" strokeLinecap="round" />
+                      <path d={sdlcSparkline} fill="none" stroke="#166534" strokeWidth="2.2" strokeLinecap="round" />
                     </svg>
                   </div>
                 </div>
               </div>
 
-              {/* Card 4: AMS Ops Index */}
+              {/* Card 4: AMS Ops Index / Maturity */}
               <div className="col-lg-3 col-sm-6">
                 <div style={{
                   background: '#ffffff',
@@ -686,15 +804,15 @@ export default function Dashboard() {
                       fontSize: '0.72rem', fontWeight: 700, color: '#4f46e5',
                       background: '#e0e7ff', padding: '3px 8px', borderRadius: '100px',
                     }}>
-                      ▼ {amsAvgScore}%
+                      {amsCount > 0 ? `${amsCount} Audit${amsCount > 1 ? 's' : ''}` : '0 Audits'}
                     </span>
                   </div>
                   <div style={{ fontSize: '2.1rem', fontWeight: 800, color: '#4f46e5', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                    {amsAvgScore}%
+                    {amsAvgScore !== null ? `${amsAvgScore}%` : '—'}
                   </div>
                   <div style={{ marginTop: '12px', height: '24px' }}>
                     <svg viewBox="0 0 160 24" style={{ width: '100%', height: '100%' }}>
-                      <path d="M 0 16 Q 40 22, 90 10 T 130 14 T 160 4" fill="none" stroke="#4f46e5" strokeWidth="2.2" strokeLinecap="round" />
+                      <path d={amsSparkline} fill="none" stroke="#4f46e5" strokeWidth="2.2" strokeLinecap="round" />
                     </svg>
                   </div>
                 </div>
@@ -703,7 +821,7 @@ export default function Dashboard() {
 
             {/* ── Analytical Row: Spider Radar + Dual Framework Cards ── */}
             <div className="row g-4 mb-4">
-              {/* Left Column (7 cols): Interactive Spider Chart */}
+              {/* Left Column (7 cols): Dynamic Spider Chart */}
               <div className="col-lg-7">
                 <div style={{
                   background: '#ffffff',
@@ -722,7 +840,7 @@ export default function Dashboard() {
                         {radarFramework === 'SDLC' ? 'SDLC Spider Chart' : 'AMS Spider Chart'}
                       </h2>
                       <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        Multi-dimensional maturity comparison across operational stages
+                        Calculated from your {radarFramework === 'SDLC' ? `${sdlcCount} SDLC` : `${amsCount} AMS`} completed assessment{radarFramework === 'SDLC' ? (sdlcCount > 1 ? 's' : '') : (amsCount > 1 ? 's' : '')}
                       </span>
                     </div>
 
@@ -742,7 +860,7 @@ export default function Dashboard() {
                           transition: 'all 0.15s',
                         }}
                       >
-                        SDLC
+                        SDLC ({sdlcCount})
                       </button>
                       <button
                         onClick={() => setRadarFramework('AMS')}
@@ -758,7 +876,7 @@ export default function Dashboard() {
                           transition: 'all 0.15s',
                         }}
                       >
-                        AMS
+                        AMS ({amsCount})
                       </button>
                     </div>
                   </div>
@@ -771,37 +889,40 @@ export default function Dashboard() {
                     onHoverDimension={setHoveredDimension}
                   />
 
-                  {/* Stage Metrics Chips */}
+                  {/* Dynamic Stage Metrics Chips */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', marginTop: '12px' }}>
-                    {(FRAMEWORK_CONFIG[radarFramework]?.domains || []).map((dom, idx) => (
-                      <div
-                        key={dom}
-                        onMouseEnter={() => setHoveredDimension(idx)}
-                        onMouseLeave={() => setHoveredDimension(null)}
-                        style={{
-                          background: hoveredDimension === idx ? '#eff6ff' : '#f8fafc',
-                          border: `1px solid ${hoveredDimension === idx ? '#93c5fd' : '#e2e8f0'}`,
-                          borderRadius: '8px',
-                          padding: '6px 12px',
-                          fontSize: '0.75rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        <span style={{ color: '#475569', fontWeight: 600 }}>{dom}:</span>
-                        <strong style={{ color: radarFramework === 'SDLC' ? '#166534' : '#4f46e5', fontFamily: 'var(--font-heading)' }}>
-                          {radarScores[idx]}%
-                        </strong>
-                      </div>
-                    ))}
+                    {(FRAMEWORK_CONFIG[radarFramework]?.domains || []).map((dom, idx) => {
+                      const scoreVal = radarScores[idx];
+                      return (
+                        <div
+                          key={dom}
+                          onMouseEnter={() => setHoveredDimension(idx)}
+                          onMouseLeave={() => setHoveredDimension(null)}
+                          style={{
+                            background: hoveredDimension === idx ? '#eff6ff' : '#f8fafc',
+                            border: `1px solid ${hoveredDimension === idx ? '#93c5fd' : '#e2e8f0'}`,
+                            borderRadius: '8px',
+                            padding: '6px 12px',
+                            fontSize: '0.75rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s',
+                          }}
+                        >
+                          <span style={{ color: '#475569', fontWeight: 600 }}>{dom}:</span>
+                          <strong style={{ color: radarFramework === 'SDLC' ? '#166534' : '#4f46e5', fontFamily: 'var(--font-heading)' }}>
+                            {scoreVal > 0 ? `${scoreVal}%` : '—'}
+                          </strong>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column (5 cols): Dual Framework Intelligence Cards */}
+              {/* Right Column (5 cols): Dynamic Dual Framework Intelligence Cards */}
               <div className="col-lg-5">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
                   {/* SDLC Intelligence Card */}
@@ -825,15 +946,21 @@ export default function Dashboard() {
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 0 0' }}>
                           SDLC Intelligence
                         </h3>
+                        <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                          {sdlcCount > 0 ? `${sdlcCount} Completed Audit${sdlcCount > 1 ? 's' : ''}` : 'No audits completed'}
+                        </span>
                       </div>
                       <CircularGauge value={sdlcAvgScore} color="#166534" />
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', fontSize: '0.8rem', marginBottom: '14px' }}>
-                      <div style={{ color: '#64748b' }}>• Requirements: <strong style={{ color: '#0f172a' }}>88%</strong></div>
-                      <div style={{ color: '#64748b' }}>• Coding: <strong style={{ color: '#0f172a' }}>94%</strong></div>
-                      <div style={{ color: '#64748b' }}>• Architecture: <strong style={{ color: '#0f172a' }}>84%</strong></div>
-                      <div style={{ color: '#64748b' }}>• Deployment: <strong style={{ color: '#0f172a' }}>91%</strong></div>
+                      {FRAMEWORK_CONFIG.SDLC.domains.map(dom => (
+                        <div key={dom} style={{ color: '#64748b' }}>
+                          • {dom}: <strong style={{ color: '#0f172a', fontFamily: 'var(--font-heading)' }}>
+                            {sdlcDomainScores[dom] ? `${sdlcDomainScores[dom]}%` : '—'}
+                          </strong>
+                        </div>
+                      ))}
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
@@ -874,15 +1001,21 @@ export default function Dashboard() {
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 0 0' }}>
                           AMS Intelligence
                         </h3>
+                        <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                          {amsCount > 0 ? `${amsCount} Completed Audit${amsCount > 1 ? 's' : ''}` : 'No audits completed'}
+                        </span>
                       </div>
                       <CircularGauge value={amsAvgScore} color="#4f46e5" />
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', fontSize: '0.8rem', marginBottom: '14px' }}>
-                      <div style={{ color: '#64748b' }}>• Service Mgmt: <strong style={{ color: '#0f172a' }}>78%</strong></div>
-                      <div style={{ color: '#64748b' }}>• Incident Mgmt: <strong style={{ color: '#0f172a' }}>74%</strong></div>
-                      <div style={{ color: '#64748b' }}>• Change Mgmt: <strong style={{ color: '#0f172a' }}>80%</strong></div>
-                      <div style={{ color: '#64748b' }}>• Release Mgmt: <strong style={{ color: '#0f172a' }}>72%</strong></div>
+                      {FRAMEWORK_CONFIG.AMS.domains.map(dom => (
+                        <div key={dom} style={{ color: '#64748b' }}>
+                          • {dom}: <strong style={{ color: '#0f172a', fontFamily: 'var(--font-heading)' }}>
+                            {amsDomainScores[dom] ? `${amsDomainScores[dom]}%` : '—'}
+                          </strong>
+                        </div>
+                      ))}
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
@@ -905,7 +1038,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* ── Bottom Section: Assessment History Data Table ── */}
+            {/* ── Bottom Section: Assessment History Data Table (100% Dynamic) ── */}
             <div style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
@@ -926,7 +1059,7 @@ export default function Dashboard() {
                     Assessment History & Audit Reports
                   </h2>
                   <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                    Historical evaluation trail and AI readiness records
+                    Showing {filteredAssessments.length} assessment{filteredAssessments.length === 1 ? '' : 's'} recorded in database
                   </span>
                 </div>
 
@@ -1033,9 +1166,9 @@ export default function Dashboard() {
                       {paginatedAssessments.map((a) => {
                         const fw = FRAMEWORK_CONFIG[a.framework || 'SDLC'] || FRAMEWORK_CONFIG.SDLC;
                         const tier = getMaturityTier(a.overallScore);
-                        const dateFormatted = new Date(a.createdAt).toLocaleDateString('en-US', {
+                        const dateFormatted = a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-US', {
                           month: 'short', day: 'numeric', year: 'numeric'
-                        });
+                        }) : '—';
 
                         return (
                           <tr
