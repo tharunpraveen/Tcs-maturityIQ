@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar />
             <main style={{ flexGrow: 1, padding: '24px 0 48px' }}>
-              <div className="container" style={{ maxWidth: '1100px' }}>
+              <div className="container-fluid" style={{ maxWidth: '1360px', padding: '0 24px' }}>
                 {children}
               </div>
             </main>
